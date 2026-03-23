@@ -1,73 +1,63 @@
 import os
 import telebot
-from telebot import types
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-TOKEN = os.environ.get("BOT_TOKEN")
+# TOKEN from Railway
+TOKEN = os.getenv("TOKEN")
+
 bot = telebot.TeleBot(TOKEN)
 
-# ✅ ACTIVE EMAILS LIST
-ACTIVE_EMAILS = [
+# Approved emails (ACTIVE USERS ONLY)
+APPROVED_EMAILS = [
     "adnanbinfurquan7@gmail.com",
     "96farhanali@gmail.com"
 ]
 
-# START COMMAND
+# Start command
 @bot.message_handler(commands=['start'])
 def start(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add("Yes ✅", "No ❌")
     bot.send_message(
         message.chat.id,
-        "Have you opened your trading account?",
-        reply_markup=markup
+        "Welcome to ForexFLY Private Signals Bot 🚀\n\nPlease enter your registered email:"
     )
 
-# YES BUTTON → ASK EMAIL
-@bot.message_handler(func=lambda message: message.text == "Yes ✅")
-def ask_email(message):
-    bot.send_message(
-        message.chat.id,
-        "Please enter your registered email address."
-    )
-
-# NO BUTTON → REFERRAL LINK
-@bot.message_handler(func=lambda message: message.text == "No ❌")
-def send_referral(message):
-    bot.send_message(
-        message.chat.id,
-        "To access our private gold signals, you must open a trading account first.\n\n"
-        "Register using the link below 👇\n"
-        "https://my.winprofx.org/register?promo=forexfly\n\n"
-        "After opening your account, type /start again."
-    )
-
-# EMAIL VERIFICATION
-@bot.message_handler(func=lambda message: "@" in message.text and "." in message.text)
+# Handle email input
+@bot.message_handler(func=lambda message: True)
 def check_email(message):
-    email = message.text.strip().lower()
+    user_email = message.text.strip().lower()
 
-    if email in ACTIVE_EMAILS:
-        markup = types.InlineKeyboardMarkup()
-        join_button = types.InlineKeyboardButton(
-            "🔒 Click Here to Join Private Channel",
+    if user_email in APPROVED_EMAILS:
+        # Approved user
+        markup = InlineKeyboardMarkup()
+        button = InlineKeyboardButton(
+            "👉 Click Here to Join Channel",
             url="https://t.me/+o6jbl-th1I1jOWM1"
         )
-        markup.add(join_button)
+        markup.add(button)
 
         bot.send_message(
             message.chat.id,
-            "✅ Account Verified Successfully!\n\n"
-            "Click the button below to request access to the private channel:",
+            "✅ Access Approved!\n\nWelcome to Private Gold Signals 💰\n\n"
+            "You will get:\n"
+            "• High Accuracy Signals\n"
+            "• Live Trading Sessions\n"
+            "• Full Price Action Support\n\n"
+            "Click below to join 👇",
             reply_markup=markup
         )
+
     else:
+        # Not approved
         bot.send_message(
             message.chat.id,
             "❌ Your account is not active.\n\n"
-            "To get access, your trading account must be:\n"
-            "• Fully activated ✅\n"
-            "• Have active trades running 📊\n\n"
-            "Once your account is active and trades are open, type /start again."
+            "Please make sure:\n"
+            "• Your account is registered\n"
+            "• Your account is active\n"
+            "• Trades should be open in your account\n\n"
+            "👉 Open account using this link:\n"
+            "https://my.winprofx.org/register?promo=forexfly"
         )
 
-bot.polling()
+# Run bot
+bot.infinity_polling()
