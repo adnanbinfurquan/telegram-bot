@@ -8,7 +8,8 @@ bot = telebot.TeleBot(TOKEN)
 # Approved emails
 APPROVED_EMAILS = [
     "adnanbinfurquan7@gmail.com",
-    "96farhanali@gmail.com"
+    "96farhanali@gmail.com",
+    "saadmansoob150@gmail.com"   # ✅ NEW EMAIL ADDED
 ]
 
 # Start command
